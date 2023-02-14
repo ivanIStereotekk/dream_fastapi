@@ -50,7 +50,6 @@ app = FastAPI(title="Deep Pavlov - Knowledge Grounding Service")
 async def respond(input_batch: BatchInputsSchema):
     batch = input_batch.batch
     responses = [""]
-    print(batch)
     random.seed(42)
     st_time = time.time()
     if batch:
@@ -61,10 +60,10 @@ async def respond(input_batch: BatchInputsSchema):
         except Exception as e:
             sentry_sdk.capture_exception(e)
             logger.exception(e)
-        else:
-            logger.info("Received empty batch, exiting with empty responses")
-            total_time = time.time() - st_time
-            logger.info(f"knowledge grounding one batch exec time: {total_time:.3f}s")
+    else:
+        logger.info("Received empty batch, exiting with empty responses")
+        total_time = time.time() - st_time
+        logger.info(f"knowledge grounding one batch exec time: {total_time:.3f}s")
     return responses
 
 
