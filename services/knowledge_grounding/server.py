@@ -11,7 +11,7 @@ from parlai.core.script import ParlaiPreloadModelScript
 from schemas.response import ResponsesSchema
 from schemas.requests import BatchInputsSchema
 
-sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"))
+sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"))  # added my personal key to .env file
 
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)

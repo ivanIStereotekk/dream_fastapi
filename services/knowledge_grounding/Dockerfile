@@ -23,20 +23,20 @@ RUN mkdir -p /opt/conda/lib/python3.7/site-packages/data/models
 
 #load data
 RUN wget $DATA_ARG -q -P /opt/conda/lib/python3.7/site-packages/data &&\
-tar -xvzf /opt/conda/lib/python3.7/site-packages/data/*.tar.gz -C /opt/conda/lib/python3.7/site-packages/data &&\
-rm /opt/conda/lib/python3.7/site-packages/data/*.tar.gz
+    tar -xvzf /opt/conda/lib/python3.7/site-packages/data/*.tar.gz -C /opt/conda/lib/python3.7/site-packages/data &&\
+    rm /opt/conda/lib/python3.7/site-packages/data/*.tar.gz
 
 # load models tar.gz
 RUN wget $MODEL1_ARG -q -P /opt/conda/lib/python3.7/site-packages/data/models &&\
-tar -xvzf /opt/conda/lib/python3.7/site-packages/data/models/*.tar.gz -C /opt/conda/lib/python3.7/site-packages/data/models &&\
-rm /opt/conda/lib/python3.7/site-packages/data/models/*.tar.gz
+    tar -xvzf /opt/conda/lib/python3.7/site-packages/data/models/*.tar.gz -C /opt/conda/lib/python3.7/site-packages/data/models &&\
+    rm /opt/conda/lib/python3.7/site-packages/data/models/*.tar.gz
 
 RUN wget $MODEL2_ARG -q -P /opt/conda/lib/python3.7/site-packages/data/models &&\
-tar -xvzf /opt/conda/lib/python3.7/site-packages/data/models/*.tar.gz -C /opt/conda/lib/python3.7/site-packages/data/models &&\
-rm /opt/conda/lib/python3.7/site-packages/data/models/*.tar.gz
+    tar -xvzf /opt/conda/lib/python3.7/site-packages/data/models/*.tar.gz -C /opt/conda/lib/python3.7/site-packages/data/models &&\
+    rm /opt/conda/lib/python3.7/site-packages/data/models/*.tar.gz
 
 WORKDIR /src
 
 COPY . /src
 
-CMD gunicorn --workers=1 server:app -b 0.0.0.0:8083
+CMD gunicorn server:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8083
