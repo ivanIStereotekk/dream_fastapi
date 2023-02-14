@@ -2,14 +2,16 @@ import logging
 import os
 import random
 import time
-
+from fastapi import FastAPI
+import uvicorn
 import sentry_sdk
 import torch
-from flask import Flask, request, jsonify
 from parlai.core.script import ParlaiPreloadModelScript
-from sentry_sdk.integrations.flask import FlaskIntegration
 
-sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), integrations=[FlaskIntegration()])
+from schemas.response import ResponsesSchema
+from schemas.requests import BatchInputsSchema
+
+sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"))
 
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -41,34 +43,30 @@ kg_script = ParlaiPreloadModelScript.main(
 
 logger.info("knowledge grounding script has loaded the model and is ready")
 
-app = Flask(__name__)
+app = FastAPI(title="Deep Pavlov - Knowledge Grounding Service")
 
 
-@app.route("/respond", methods=["POST"])
-def respond():
-    batch = request.json["batch"]
+@app.post("/respond", response_model=ResponsesSchema, tags=["Knowledge grounding endpoint"])
+async def respond(input_batch: BatchInputsSchema):
+    batch = input_batch.batch
     responses = [""]
+    print(batch)
     random.seed(42)
     st_time = time.time()
     if batch:
-        user_inputs = {"history": batch[0]["history"].split("\n") if batch[0]["history"] else [""], "inputs": []}
-        for sample in batch:
-            user_inputs["inputs"].append(
-                {
-                    "checked_sentence": sample["checked_sentence"],
-                    "knowledge": sample["knowledge"],
-                    "text": sample["text"],
-                }
-            )
         try:
-            raw_responses = kg_script.run(user_inputs)
-            responses = [r["text"] for r in raw_responses]
+            raw_responses = kg_script.run(batch)
+            responses.append(raw_responses)
             logger.info(f"Current sample responses: {responses}")
         except Exception as e:
             sentry_sdk.capture_exception(e)
             logger.exception(e)
-    else:
-        logger.info("Received empty batch, exiting with empty responses")
-    total_time = time.time() - st_time
-    logger.info(f"knowledge grounding one batch exec time: {total_time:.3f}s")
-    return jsonify(responses)
+        else:
+            logger.info("Received empty batch, exiting with empty responses")
+            total_time = time.time() - st_time
+            logger.info(f"knowledge grounding one batch exec time: {total_time:.3f}s")
+    return responses
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8083)
