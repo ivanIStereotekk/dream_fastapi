@@ -2,7 +2,7 @@ itsdangerous==2.0.1
 gunicorn==19.9.0
 uvicorn==0.20.0
 requests==2.22.0
-sentry-sdk
+sentry-sdk[fastapi]
 markupsafe==2.0.1
 nltk==3.2.5
 fastapi==0.45.0
