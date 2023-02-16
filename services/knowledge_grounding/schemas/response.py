@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Optional, Tuple
 from pydantic import BaseModel
 
 
 class ResponsesSchema(BaseModel):
-    responses: Optional[dict] = {}
+    responses: Optional[Tuple] = None
