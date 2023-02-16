@@ -54,7 +54,7 @@ async def respond(input_batch: BatchInputsSchema):
     st_time = time.time()
     if batch:
         try:
-            raw_responses = kg_script.run(batch)
+            raw_responses = await kg_script.run(batch)
             responses.append(raw_responses)
             logger.info(f"Current sample responses: {responses}")
         except Exception as e:
