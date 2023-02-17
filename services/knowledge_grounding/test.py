@@ -47,4 +47,4 @@ class TestKnowledgeGrounding:
             print(f"Got Success with None query {response.text}")
         else:
             assert response.status_code == 200 , f"{response.status_code}"
-            print(f"Got successfull with status code 200 {response.text}")
+            print(f"Got successfull response with status code 200 {response.text}")

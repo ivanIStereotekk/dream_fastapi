@@ -46,7 +46,7 @@ logger.info("knowledge grounding script has loaded the model and is ready")
 app = FastAPI(title="Deep Pavlov - Knowledge Grounding Service")
 
 
-@app.post("/respond", response_model=ResponsesSchema, tags=["Knowledge grounding endpoint"])
+@app.post("/respond", response_model=[ResponsesSchema], tags=["Knowledge grounding endpoint"])
 async def respond(input_batch: BatchInputsSchema):
     batch = input_batch.batch
     responses = [""]
